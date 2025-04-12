@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhistleSafe - Anonymous Complaint Forum</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
+      color: white;
+      overflow: hidden;
+    }
+
+    canvas#bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      z-index: 3;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    header a {
+      color: #00ffc8;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+
+    header a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px #00ffc8;
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      top: 30%;
+      width: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      margin-bottom: 20px;
+      color: #00ffc8;
+      text-shadow: 0 0 12px #00ffc8;
+    }
+
+    .btn {
+      background: #00ffc8;
+      color: #000;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px #00ffc8aa;
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+
+    .btn:hover {
+      background: #000;
+      color: #00ffc8;
+      box-shadow: 0 0 30px #00ffc8;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 3;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mic-btn {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      background: #00ffc8;
+      color: #000;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 22px;
+      box-shadow: 0 0 15px #00ffc8;
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.3s ease;
+    }
+
+    .mic-btn:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg"></canvas>
+
+  <header>
+    <a href="lll.html">Legal Laws</a>
+   
+    <a href="tracking.html">Tracker</a>
+<a href="bluecross.html">Helpline</a>
+    <a href="helpline.html">Helpline</a>
+  </header>
+
+  <div class="hero-content" id="mainHome">
+    <h1>🕊️ WhistleSafe</h1>
+    <a href="report.html" class="btn">File a Report</a>
+    <a href="#" class="btn" onclick="showAdminLogin()">Admin Login</a>
+  </div>
+
+  <!-- Floating mic button -->
+  <button class="mic-btn" onclick="startListening()">🎤</button>
+
+  <!-- USER LOGIN IFRAME -->
+  <iframe id="loginFrame" srcdoc="<!DOCTYPE html><html><head><style>body{margin:0;background:#000;font-family:'Segoe UI',sans-serif;color:#00ffc8;display:flex;justify-content:center;align-items:center;height:100vh;}.login-container{background:rgba(0,0,0,0.9);padding:30px;border-radius:15px;box-shadow:0 0 20px #00ffc855;width:300px;text-align:center;}input{display:block;width:100%;margin:12px 0;padding:10px;border-radius:8px;border:none;font-size:1rem;}button{background-color:#00ffc8;border:none;color:black;padding:10px 20px;font-weight:bold;border-radius:8px;cursor:pointer;margin-top:10px;}button:hover{background-color:#000;color:#00ffc8;box-shadow:0 0 10px #00ffc8;}#otpSection,#successMsg{display:none;margin-top:15px;}</style></head><body><div class='login-container' id='loginBox'><h2>User Login</h2><input type='text' id='username' placeholder='Username'/><input type='password' id='password' placeholder='Password'/><input type='text' id='email id' placeholder='email id'/>
+<button onclick='fakeLogin()'>Login</button><div id='otpSection'><p>OTP sent to your registered email 📩</p><input type='text' id='otp' placeholder='Enter OTP'/><button onclick='submitOtp()'>Submit OTP</button></div><div id='successMsg'>Login Successful. Redirecting...</div></div><script>function fakeLogin(){const u=document.getElementById('username').value;const p=document.getElementById('password').value;if(u&&p){alert('Verifying credentials...');setTimeout(()=>{document.getElementById('otpSection').style.display='block';},1500);}else{alert('Please enter both fields.');}}function submitOtp(){const otp=document.getElementById('otp').value;if(otp){alert('Verifying OTP...');setTimeout(()=>{document.getElementById('successMsg').style.display='block';document.getElementById('loginBox').style.opacity='0.3';setTimeout(()=>{parent.postMessage('userLoginSuccess','*');},1500);},1000);}else{alert('Please enter the OTP.');}}</script></body></html>"></iframe>
+
+  <!-- ADMIN LOGIN IFRAME -->
+  <iframe id="adminLoginFrame" class="hide" srcdoc="<!DOCTYPE html><html><head><style>body{margin:0;background:#000;font-family:'Segoe UI',sans-serif;color:#00ffc8;display:flex;justify-content:center;align-items:center;height:100vh;}.login-container{background:rgba(0,0,0,0.9);padding:30px;border-radius:15px;box-shadow:0 0 20px #00ffc855;width:300px;text-align:center;}input{display:block;width:100%;margin:12px 0;padding:10px;border-radius:8px;border:none;font-size:1rem;}button{background-color:#00ffc8;border:none;color:black;padding:10px 20px;font-weight:bold;border-radius:8px;cursor:pointer;margin-top:10px;}button:hover{background-color:#000;color:#00ffc8;box-shadow:0 0 10px #00ffc8;}#otpSection,#successMsg{display:none;margin-top:15px;}</style></head><body><div class='login-container' id='loginBox'><h2>Admin Login</h2><input type='text' id='username' placeholder='Admin Username'/><input type='text' id='email id' placeholder='email id'/>
+
+<input type='password' id='password' placeholder='Password'/><button onclick='fakeLogin()'>Login</button><div id='otpSection'><p>OTP sent to your registered admin email 📩</p><input type='text' id='otp' placeholder='Enter OTP'/><button onclick='submitOtp()'>Submit OTP</button></div><div id='successMsg'>Login Successful. Redirecting...</div></div><script>function fakeLogin(){const u=document.getElementById('username').value;const p=document.getElementById('password').value;if(u&&p){alert('Verifying credentials...');setTimeout(()=>{document.getElementById('otpSection').style.display='block';},1500);}else{alert('Please enter both fields.');}}function submitOtp(){const otp=document.getElementById('otp').value;if(otp){alert('Verifying OTP...');setTimeout(()=>{document.getElementById('successMsg').style.display='block';document.getElementById('loginBox').style.opacity='0.3';setTimeout(()=>{parent.postMessage('adminLoginSuccess','*');},1500);},1000);}else{alert('Please enter the OTP.');}}</script></body></html>"></iframe>
+
+  <script>
+    // Background stars
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let stars = [];
+    const numStars = 400;
+
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        z: Math.random() * canvas.width,
+      });
+    }
+
+    function drawStars() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ffc8';
+      for (let i = 0; i < numStars; i++) {
+        let star = stars[i];
+        star.z -= 2;
+        if (star.z <= 0) star.z = canvas.width;
+        let k = 128.0 / star.z;
+        let px = star.x * k + canvas.width / 2;
+        let py = star.y * k + canvas.height / 2;
+        if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+          let size = (1 - star.z / canvas.width) * 2;
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    drawStars();
+
+    function showAdminLogin() {
+      document.getElementById('loginFrame').classList.add('hide');
+      document.getElementById('adminLoginFrame').classList.remove('hide');
+    }
+
+    window.addEventListener('message', function(e) {
+      if (e.data === 'userLoginSuccess') {
+        document.getElementById('loginFrame').classList.add('hide');
+        document.getElementById('mainHome').style.opacity = 1;
+      }
+      if (e.data === 'adminLoginSuccess') {
+        document.getElementById('adminLoginFrame').classList.add('hide');
+        window.location.href = 'adminDashboard.html';
+      }
+    });
+
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.pitch = 1.2;
+      utter.rate = 1;
+      synth.speak(utter);
+    }
+
+    function startListening() {
+      if (!('webkitSpeechRecognition' in window)) {
+        speak("Sorry, voice recognition is not supported in this browser.");
+        alert("Use Chrome for voice commands.");
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+      speak("Hello,how may I help you ,I'm listening. Please say a command.");
+
+      recognition.onresult = function(event) {
+        const command = event.results[0][0].transcript.toLowerCase();
+
+        if (command.includes('legal')) {
+          speak("Opening legal laws.");
+          window.location.href = "lll.html";
+        }  else if (command.includes('tracker')) {
+          speak("Opening the tracker.");
+          window.location.href = "tracking.html";
+        } else if (command.includes('helpline')) {
+          speak("Opening the helpline.");
+          window.location.href = "helpline.html";
+        } else if (command.includes('report')) {
+          speak("Taking you to the report form.");
+          window.location.href = "report.html";
+  } else if (command.includes('i need to report a problem ')) {
+          speak("Taking you to the report form.");
+          window.location.href = "report.html";
+
+        } else {
+          speak("Sorry, I didn't catch that. Please try again.");
+          alert("Unrecognized command.");
+        }
+      };
+
+      recognition.onerror = function(event) {
+        speak("Something went wrong with voice recognition.");
+        alert("Voice error: " + event.error);
+      };
+    }
+  </script>
+
+</body>
+</html>
