@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Animal Rescue Request – Blue Cross</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: url('https://png.pngtree.com/background/20230416/original/pngtree-website-technology-line-dark-background-picture-image_2443641.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: white;
+      position: relative;
+    }
+
+    /* Optional semi-transparent overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6); /* dark overlay */
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 700px;
+      background-color: rgba(255, 192, 203, 0.2); /* light pink with transparency */
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      font-size: 26px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      background-color: #0074D9;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .response {
+      background-color: rgba(232, 244, 255, 0.15);
+      padding: 20px;
+      margin-top: 30px;
+      border-left: 4px solid #00aaff;
+      border-radius: 5px;
+      color: #ffffff;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 22px;
+      }
+
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      button {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+
+      label {
+        font-size: 14px;
+      }
+
+      input, textarea, select {
+        padding: 8px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="form-container">
+    <h1>Animal Rescue Request Form</h1>
+    <form id="rescueForm">
+      <label for="name">Your Full Name</label>
+      <input type="text" id="name" name="name" placeholder="John Doe" required />
+
+      <label for="phone">Phone Number (WhatsApp)</label>
+      <input type="tel" id="phone" name="phone" placeholder="9876543210" required />
+
+      <label for="location">Location of Incident</label>
+      <input type="text" id="location" name="location" placeholder="Chennai, Tamil Nadu" required />
+
+      <label for="animal">Type of Animal</label>
+      <select id="animal" name="animal" required>
+        <option value="">-- Select --</option>
+        <option value="Dog">Dog</option>
+        <option value="Cat">Cat</option>
+        <option value="Bird">Bird</option>
+        <option value="Cow/Buffalo">Cow/Buffalo</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="details">Description of Incident</label>
+      <textarea id="details" name="details" rows="4" placeholder="Describe the situation..." required></textarea>
+
+      <label for="photo">Image URL (optional)</label>
+      <input type="url" id="photo" name="photo" placeholder="https://example.com/photo.jpg" />
+
+      <button type="submit">Submit Report</button>
+    </form>
+
+    <div id="response" class="response" style="display:none;"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('rescueForm');
+    const response = document.getElementById('response');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Get form values
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const location = document.getElementById('location').value;
+      const animal = document.getElementById('animal').value;
+      const details = document.getElementById('details').value;
+      const photo = document.getElementById('photo').value;
+
+      // Display submission summary
+      response.innerHTML = `
+        <h2>✅ Thank You, ${name}!</h2>
+        <p>Your report has been submitted successfully.</p>
+        <h3>📋 Submission Summary:</h3>
+        <ul>
+          <li><strong>Phone:</strong> ${phone}</li>
+          <li><strong>Location:</strong> ${location}</li>
+          <li><strong>Animal Type:</strong> ${animal}</li>
+          <li><strong>Description:</strong> ${details}</li>
+          ${photo ? `<li><strong>Photo Evidence:</strong> <a href="${photo}" target="_blank">View Photo</a></li>` : ''}
+        </ul>
+        <p>We appreciate your compassion. A Blue Cross member will contact you shortly.</p>
+      `;
+      
+      response.style.display = 'block';
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
