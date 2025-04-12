@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Whistleblower Report</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .form-container {
+      max-width: 750px;
+      margin: auto;
+      padding: 20px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      transition: transform 0.2s ease-in-out;
+    }
+    .form-container:hover {
+      transform: scale(1.02);
+    }
+    textarea, input, select, button {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #2c2c2c;
+      color: #f0f0f0;
+      border: 1px solid #444;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+    .voice-btn {
+      background: #2196F3;
+      color: white;
+      padding: 8px;
+      margin-top: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    .voice-btn:hover {
+      background: #1769aa;
+    }
+    .quick-escape-btn {
+      background: #f44336;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .quick-escape-btn:hover {
+      background: #d32f2f;
+    }
+    #caseIdDisplay {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #90caf9;
+    }
+    #summary {
+      margin-top: 20px;
+    }
+    .interactive-summary div {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Submit a Whistleblower Report</h2>
+  <div id="caseIdDisplay">🆔 Case ID: </div> <!-- Case ID will be displayed here -->
+
+  <form id="reportForm">
+    <label for="reportType">Report Type:</label>
+    <select id="reportType" required onchange="updateSummary()">
+      <option value="">Select Type</option>
+      <option value="Corruption">Corruption</option>
+      <option value="Harassment">Harassment</option>
+      <option value="Safety Violation">Safety Violation</option>
+      <option value="Misconduct">Misconduct</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="reportTime">Date and Time of Incident:</label>
+    <input type="datetime-local" id="reportTime" required onchange="updateSummary()" />
+
+    <label for="reportText">Describe the issue:</label>
+    <textarea id="reportText" rows="6" placeholder="Describe your report..." required onchange="updateSummary()"></textarea>
+    <button type="button" class="voice-btn" onclick="startVoice()">🎤 Speak</button>
+
+    <!-- Additional Contact Information -->
+    <label for="email">Email (optional):</label>
+    <input type="email" id="email" placeholder="Your email" onchange="updateSummary()" />
+
+    <label for="phone">Phone Number (optional):</label>
+    <input type="tel" id="phone" placeholder="Your phone number" onchange="updateSummary()" />
+
+    <label for="fileInput">Attach Evidence (optional):</label>
+    <input type="file" id="fileInput" accept="image/*, .pdf, .docx" multiple onchange="updateSummary()" />
+
+    <label>Click on the map to mark location of the incident:</label>
+    <div id="map"></div>
+    <div id="selectedLocation" style="margin-top:10px;"></div>
+
+    <!-- Auto-Generated Report Summary -->
+    <div id="summary" class="interactive-summary">
+      <h4>Report Summary</h4>
+      <div><strong>Report Type:</strong> <span id="summaryType">Not selected</span></div>
+      <div><strong>Description:</strong> <span id="summaryDesc">Not entered</span></div>
+      <div><strong>Location:</strong> <span id="summaryLocation">Not selected</span></div>
+    </div>
+
+    <br>
+    <button type="submit" onclick="generateSummary()">✅ Submit Report</button>
+  </form>
+
+  <!-- Quick Escape Button -->
+  <button class="quick-escape-btn" onclick="quickEscape()">🚪 Quick Escape</button>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // Generate a unique Case ID on page load
+  function generateCaseId() {
+    const caseId = 'CID-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    document.getElementById('caseIdDisplay').textContent = `🆔 Case ID: ${caseId}`;
+  }
+
+  // Call this function on page load
+  generateCaseId();
+
+  // Initialize the map for selecting location
+  const map = L.map('map').setView([22.9734, 78.6569], 5); // India center
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  let marker;
+  map.on('click', function(e) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+
+    // Use reverse geocoding to get the place name
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+      .then(response => response.json())
+      .then(data => {
+        const locationName = data.display_name || "Unknown location";
+        document.getElementById('selectedLocation').textContent = `📍 Location: ${locationName}`;
+        // Update the location in the report summary
+        updateSummary();
+      })
+      .catch(error => {
+        console.error('Error fetching location name:', error);
+        document.getElementById('selectedLocation').textContent = "📍 Location: Unable to retrieve location name";
+      });
+  });
+
+  // Speech recognition feature
+  function startVoice() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US'; // Set the language to English
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById('reportText').value = transcript;
+      // Update the summary when voice input is recognized
+      updateSummary();
+    };
+
+    recognition.onerror = function(event) {
+      if (event.error === 'not-allowed') {
+        alert('Microphone access is blocked. Please allow microphone access in your browser settings.');
+      } else {
+        alert('Error occurred in recognition: ' + event.error);
+      }
+    };
+  }
+
+  // Function to update the report summary dynamically
+  function updateSummary() {
+    const reportType = document.getElementById('reportType').value;
+    const reportDesc = document.getElementById('reportText').value;
+    const selectedLocation = document.getElementById('selectedLocation').textContent;
+
+    document.getElementById('summaryType').textContent = reportType || 'Not selected';
+    document.getElementById('summaryDesc').textContent = reportDesc || 'Not entered';
+    document.getElementById('summaryLocation').textContent = selectedLocation || 'Not selected';
+  }
+
+  // Quick Escape function (redirects to a neutral website)
+  function quickEscape() {
+    // Redirect the user to a neutral website (e.g., Wikipedia)
+    window.location.href = "https://www.wikipedia.org";  // Replace this with a neutral URL
+  }
+
+  // Call updateSummary function on page load to reflect initial empty state
+  window.onload = updateSummary;
+</script>
+
+</body>
+</html>
