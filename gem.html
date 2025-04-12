@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complaint Status</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      font-family: "Segoe UI", sans-serif;
+      color: white;
+    }
+
+    .header {
+      background-color: #2db78f;
+      height: 80px;
+      width: 100%;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 30px;
+      background-color: #111;
+    }
+
+    .tracking-id {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 40px;
+    }
+
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin-bottom: 60px;
+    }
+
+    .progress-bar::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 8%;
+      width: 84%;
+      height: 3px;
+      background-color: #2db78f;
+      z-index: 1;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+
+    .step .circle {
+      margin: 0 auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px solid #2db78f;
+      background-color: #111;
+    }
+
+    .step.active .circle {
+      background-color: #2db78f;
+    }
+
+    .step span {
+      margin-top: 10px;
+      display: block;
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      margin-top: 20px;
+      padding-left: 50px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 34px;
+      left: 27px;
+      width: 2px;
+      height: calc(100% - 34px);
+      background-color: #2db78f;
+    }
+
+    .timeline-item {
+      background-color: #111;
+      border: 1px solid #333;
+      padding: 20px;
+      border-radius: 10px;
+      color: #aaa;
+      position: relative;
+      padding-left: 50px;
+    }
+
+    .timeline-item.active {
+      border: 1px solid #2db78f;
+      color: white;
+    }
+
+    .timeline-item .dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #333;
+      border: 2px solid #333;
+      position: absolute;
+      top: 26px;
+      left: -38px;
+    }
+
+    .timeline-item.active .dot {
+      background-color: #2db78f;
+      border-color: #2db78f;
+    }
+
+    .timeline-item h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .timeline-item p {
+      margin: 4px 0 0;
+      font-size: 13px;
+    }
+
+    /* Match box outline in active */
+    .timeline-item.active {
+      outline: 1px solid #2db78f;
+    }
+  </style>
+</head>
+<body>
+  <div class="header"></div>
+  <div class="container">
+    <div class="tracking-id">Tracking ID: 437962</div>
+
+    <div class="progress-bar">
+      <div class="step active">
+        <div class="circle"></div>
+        <span>Complaint Confirmed</span>
+      </div>
+      <div class="step">
+        <div class="circle"></div>
+        <span>In Progress</span>
+      </div>
+      <div class="step">
+        <div class="circle"></div>
+        <span>Being Resolved</span>
+      </div>
+      <div class="step">
+        <div class="circle"></div>
+        <span>Completed</span>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item active">
+        <div class="dot"></div>
+        <h4>Complaint Confirmed</h4>
+        <p>Tracking ID: 437962</p>
+      </div>
+      <div class="timeline-item">
+        <div class="dot"></div>
+        <h4>In Progress</h4>
+        <p>Complaint is being Reviewed</p>
+      </div>
+      <div class="timeline-item">
+        <div class="dot"></div>
+        <h4>Being Resolved</h4>
+        <p>Action will be taken</p>
+      </div>
+      <div class="timeline-item">
+        <div class="dot"></div>
+        <h4>Completed</h4>
+        <p>Case is completed</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
